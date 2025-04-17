@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz: Atmung</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f3f4f6;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+    h2 { text-align: center; }
+    .question {
+      margin-bottom: 15px;
+    }
+    .answers button {
+      display: block;
+      margin: 5px 0;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .correct {
+      background-color: #c8e6c9 !important;
+    }
+    .wrong {
+      background-color: #ffcdd2 !important;
+    }
+    .score {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2>Quiz zum Thema Atmung</h2>
+    <div class="question" id="question">Frage lädt...</div>
+    <div class="answers" id="answers"></div>
+    <div class="score" id="score" style="display:none;"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Wie heißt das Organ, in dem der Gasaustausch stattfindet?",
+        answers: ["Herz", "Leber", "Lunge", "Magen"],
+        correct: 2
+      },
+      {
+        question: "Welches Gas atmen wir hauptsächlich ein?",
+        answers: ["Sauerstoff", "Kohlenstoffdioxid", "Stickstoff", "Helium"],
+        correct: 0
+      },
+      {
+        question: "Wie viele Lungenflügel hat ein Mensch?",
+        answers: ["Einen", "Zwei", "Drei", "Vier"],
+        correct: 1
+      },
+      {
+        question: "Was passiert beim Einatmen?",
+        answers: [
+          "Das Zwerchfell hebt sich",
+          "Die Lunge zieht sich zusammen",
+          "Die Lunge füllt sich mit Luft",
+          "Das Herz schlägt schneller"
+        ],
+        correct: 2
+      },
+      {
+        question: "Was ist die Hauptfunktion der Lunge?",
+        answers: [
+          "Verdauung",
+          "Blut filtern",
+          "Gasaustausch",
+          "Wärmeregulation"
+        ],
+        correct: 2
+      }
+    ];
+
+    let currentIndex = 0;
+    let correctAnswers = 0;
+    const totalQuestions = 5;
+    let usedIndices = [];
+
+    function shuffleQuestions() {
+      usedIndices = [];
+    }
+
+    function getRandomQuestionIndex() {
+      if (usedIndices.length === questions.length) {
+        return -1;
+      }
+      let index;
+      do {
+        index = Math.floor(Math.random() * questions.length);
+      } while (usedIndices.includes(index));
+      usedIndices.push(index);
+      return index;
+    }
+
+    function showQuestion() {
+      const questionEl = document.getElementById("question");
+      const answersEl = document.getElementById("answers");
+      answersEl.innerHTML = "";
+
+      const qIndex = getRandomQuestionIndex();
+      if (qIndex === -1 || currentIndex >= totalQuestions) {
+        const percent = Math.round((correctAnswers / totalQuestions) * 100);
+        document.getElementById("score").innerHTML =
+          `Du hast ${correctAnswers} von ${totalQuestions} Fragen richtig beantwortet (${percent}%)`;
+        document.getElementById("score").style.display = "block";
+        questionEl.style.display = "none";
+        return;
+      }
+
+      const q = questions[qIndex];
+      questionEl.textContent = q.question;
+
+      q.answers.forEach((answer, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = answer;
+        btn.onclick = () => {
+          if (i === q.correct) {
+            btn.classList.add("correct");
+            correctAnswers++;
+          } else {
+            btn.classList.add("wrong");
+            answersEl.children[q.correct].classList.add("correct");
+          }
+          currentIndex++;
+          setTimeout(showQuestion, 1000);
+        };
+        answersEl.appendChild(btn);
+      });
+    }
+
+    shuffleQuestions();
+    showQuestion();
+  </script>
+</body>
+</html>
